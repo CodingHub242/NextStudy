@@ -1,11 +1,33 @@
-import { lusitana } from "../ui/fonts"
+import { lusitana } from "../ui/fonts";
+import { Card } from "../ui/dashboard/cards";
+import RevenueChart from "../ui/dashboard/revenue-chart";
+import LatestInvoices from "../ui/dashboard/latest-invoices";
 
-export default function Page(){
+////GETTING DATA FROM DATA.TS
+import { fetchRevenue,fetchLatestInvoices,fetchCardData } from "../lib/data";
+
+export default async function Page(){
+    const revenue = await fetchRevenue();
+    const latestinvoices = await fetchLatestInvoices();
+    const CardData = await fetchCardData();
+ 
     return (
         <main>
             <h1 className={`${lusitana.className} mb-4 text-xl md:text-2xl`}>
                 Dashboard
             </h1>
+
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <Card title="Collected" value={CardData.totalPaidInvoices} type="collected"/>
+                <Card title="Pending" value={CardData.totalPendingInvoices} type="pending"/>
+                <Card title="Total Invoices" value={CardData.numberOfInvoices} type="invoices"/>
+                <Card title="Collected" value={CardData.numberOfCustomers} type="customers"/>
+            </div>
+
+            <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-4 lg:grid-cols-8">
+                    <RevenueChart revenue={revenue}/>
+                    <LatestInvoices latestInvoices={latestinvoices}/>
+            </div>
         </main>
     )
 }
